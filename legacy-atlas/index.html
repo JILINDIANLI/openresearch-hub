@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas | 项目共享平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="overrides.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#"><span class="brand-mark">A</span><span>atlas</span><small>项目共享</small></a>
+    <div class="audience-toggle"><button class="active" data-view="public"><i data-lucide="globe-2"></i>项目广场</button><button data-view="internal"><i data-lucide="building-2"></i>内部工作台</button></div>
+    <div class="header-actions"><button class="icon-button"><i data-lucide="search"></i></button><button id="shareProject" class="share-button"><i data-lucide="plus"></i>分享项目</button><span class="avatar">林</span></div>
+  </header>
+  <main id="publicView">
+    <section class="hero"><div><p class="eyebrow">COMPANY PROJECT LIBRARY</p><h1>把做过的事，<br/>变成看得见的能力。</h1><p>浏览团队公开的项目实践、技术成果与验证记录。</p></div><div class="hero-stat"><b id="projectCount">6</b><span>已发布项目</span><i></i><b>4</b><span>能力方向</span></div></section>
+    <section class="finder"><i data-lucide="search"></i><input id="projectSearch" placeholder="搜索项目、技术方向或关键词" /><button>搜索</button></section>
+    <div class="content-wrap"><div class="category-row" id="categories"><button class="active" data-category="all">全部项目</button><button data-category="ai">人工智能</button><button data-category="robotics">智能硬件</button><button data-category="platform">软件平台</button><button data-category="delivery">行业应用</button></div><div class="section-title"><div><h2>精选项目</h2><p>每一个项目，都有清晰的背景、成果和验证依据。</p></div><span id="resultCount">6 个项目</span></div><div class="project-grid" id="projectGrid"></div></div>
+  </main>
+  <main class="hidden internal-view" id="internalView">
+    <section class="workspace-head"><div><p class="eyebrow">INTERNAL WORKSPACE</p><h1>团队项目工作台</h1><p>把项目的一页介绍、代码和验证材料留下来，后面的人就能接得住。</p></div><button id="newProject" class="share-button"><i data-lucide="plus"></i>提交项目</button></section>
+    <section class="workspace-wrap"><div class="quick-note"><span><i data-lucide="lightbulb"></i></span><div><h2>项目提交，只要四样东西</h2><p>项目简介、代码链接、验证视频、负责人。先完整、后精致。</p></div></div><div class="internal-grid"><section class="internal-panel"><div class="panel-heading"><div><h2>我提交的项目</h2><p>项目先保存在内部，确认后再公开展示。</p></div></div><div id="myProjects"></div></section><aside class="internal-panel guide"><h2>一份好项目页</h2><ol><li><b>说清问题</b><span>解决谁的什么问题。</span></li><li><b>留住成果</b><span>给出可访问的代码或产物链接。</span></li><li><b>证明有效</b><span>附上演示、测试或客户验证视频。</span></li><li><b>方便联系</b><span>标注负责人和技术标签。</span></li></ol></aside></div></section>
+  </main>
+  <dialog id="projectDialog"><form id="projectForm"><button type="button" class="modal-close" id="closeDialog"><i data-lucide="x"></i></button><span class="modal-icon"><i data-lucide="folder-up"></i></span><h2 id="formTitle">分享一个项目</h2><p id="formSubtitle">填写核心信息，项目页就有了可靠的第一版。</p><label>项目名称<input required id="titleInput" placeholder="例如：园区无人机智能巡检" /></label><label>一句话介绍<textarea required id="summaryInput" maxlength="90" placeholder="描述项目解决的问题和最重要的成果"></textarea></label><label>项目完整说明<textarea id="descriptionInput" placeholder="项目背景、解决方案、验证成果和适用场景"></textarea></label><div class="form-columns"><label>项目方向<select id="categoryInput"><option value="ai">人工智能</option><option value="robotics">智能硬件</option><option value="platform">软件平台</option><option value="delivery">行业应用</option></select></label><label>负责人<input required id="ownerInput" placeholder="姓名" /></label></div><div class="form-columns"><label>版本号<input id="versionInput" value="v1.0" placeholder="v1.0" /></label><label>技术标签<input id="tagsInput" placeholder="视觉识别, 边缘计算" /></label></div><label>代码链接<input id="codeInput" type="url" placeholder="https://github.com/...（可稍后补充）" /></label><label class="file-field">或上传代码包<input id="codeFileInput" type="file" accept=".zip,.7z,.tar,.gz,.rar" /><small id="codeFileName">未选择文件</small></label><label>验证视频链接<input id="videoInput" type="url" placeholder="https://...（可稍后补充）" /></label><label class="file-field">或上传验证视频<input id="videoFileInput" type="file" accept="video/*" /><small id="videoFileName">未选择文件</small></label><label class="check-line" id="publishLine"><input type="checkbox" id="publishInput" /> 直接公开到项目广场（演示管理员权限）</label><div class="modal-actions"><button type="button" id="cancelDialog" class="ghost-action">取消</button><button class="create-action" id="saveProject">保存项目</button></div></form></dialog>
+  <dialog id="detailDialog"><article class="project-detail"><button class="modal-close" id="closeDetail"><i data-lucide="x"></i></button><div class="detail-banner" id="detailBanner"></div><div class="detail-content"><div class="detail-topline"><span class="detail-category" id="detailCategory"></span><span class="release-pill"><i data-lucide="git-branch"></i> v1.0 · 已验证</span></div><h1 id="detailTitle"></h1><p id="detailSummary"></p><div class="detail-meta"><span><i data-lucide="user-round"></i><b id="detailOwner"></b></span><span><i data-lucide="calendar-days"></i><b id="detailDate"></b></span><span><i data-lucide="shield-check"></i><b>可公开复用</b></span></div><div class="detail-tabs"><button class="active">概览</button><button>资源</button><button>验证记录</button><button>更新日志</button></div><section class="resource-list"><a id="detailCode" target="_blank"><i data-lucide="code-2"></i><span><b>项目代码</b><small id="detailCodeNote">查看代码仓库或项目资料</small></span><i data-lucide="arrow-up-right"></i></a><a id="detailVideo" target="_blank"><i data-lucide="circle-play"></i><span><b>验证视频</b><small id="detailVideoNote">查看项目演示与测试记录</small></span><i data-lucide="arrow-up-right"></i></a><div class="resource-note"><i data-lucide="file-text"></i><span><b>项目说明</b><small>README、部署方式和适用场景可继续补充</small></span><span class="resource-badge">待完善</span></div></section><div class="detail-footer"><span><i data-lucide="message-circle"></i> 0 条讨论</span><button class="text-button">复制项目链接 <i data-lucide="copy"></i></button></div></div></article></dialog>
+  <script src="app.js"></script>
+  <script src="project-management.js"></script>
+</body>
+</html>

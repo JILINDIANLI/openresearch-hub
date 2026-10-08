@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.py[cod]
+.env
+.env.production
+*.secret
+backup/private/
+__pycache__/
+*.py[cod]

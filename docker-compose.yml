@@ -1,0 +1,101 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: openresearch
+      POSTGRES_USER: openresearch
+      POSTGRES_PASSWORD: openresearch
+    ports:
+      - "5432:5432"
+    volumes:
+      - openresearch-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openresearch -d openresearch"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - openresearch-minio:/data
+
+  gitea:
+    image: gitea/gitea:1.24.6
+    environment:
+      USER_UID: 1000
+      USER_GID: 1000
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__database__PATH: /data/gitea/gitea.db
+      GITEA__server__DOMAIN: 127.0.0.1
+      GITEA__server__ROOT_URL: http://127.0.0.1:3000/
+      GITEA__server__HTTP_PORT: 3000
+      GITEA__server__SSH_DOMAIN: 127.0.0.1
+      GITEA__server__SSH_PORT: 2222
+      GITEA__server__SSH_LISTEN_PORT: 22
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    volumes:
+      - openresearch-gitea:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:3000/api/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg2://openresearch:openresearch@postgres:5432/openresearch
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      MINIO_ENDPOINT: minio:9000
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-127.0.0.1:9000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET:-openresearch-resources}
+      MINIO_SECURE: "false"
+      MINIO_PUBLIC_SECURE: ${MINIO_PUBLIC_SECURE:-false}
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE:-209715200}
+      GITEA_URL: ${GITEA_URL:-http://127.0.0.1:3000}
+      GITEA_INTERNAL_URL: ${GITEA_INTERNAL_URL:-http://gitea:3000}
+      GITEA_API_URL: ${GITEA_API_URL:-http://gitea:3000/api/v1}
+      GITEA_TOKEN: ${GITEA_TOKEN}
+      GITEA_DEFAULT_OWNER: ${GITEA_DEFAULT_OWNER:-openresearch}
+      GITEA_HTTP_PORT: ${GITEA_HTTP_PORT:-3000}
+      GITEA_SSH_PORT: ${GITEA_SSH_PORT:-2222}
+      GITEA_TIMEOUT: ${GITEA_TIMEOUT:-8}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      gitea:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+volumes:
+  openresearch-postgres:
+  openresearch-minio:
+  openresearch-gitea:

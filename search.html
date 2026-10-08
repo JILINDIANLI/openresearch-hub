@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>搜索 · 开放研究中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="/auth.js"></script>
+  <link rel="stylesheet" href="/search.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="mark"><i></i><i></i><i></i></span><span>开放研究中心</span></a>
+    <form id="globalSearch" class="searchbox" role="search"><i data-lucide="search"></i><input id="queryInput" name="q" autocomplete="off" placeholder="搜索模型、数据、项目、论文…" aria-label="搜索资源"><kbd>回车</kbd><div id="suggestions" class="suggestions" hidden></div></form>
+    <div class="top-actions"><a href="/">浏览</a><a class="publish" href="/publish"><i data-lucide="plus"></i><span>发布</span></a><span data-auth-nav></span></div>
+  </header>
+
+  <main class="page">
+    <section class="heading">
+      <div><p class="eyebrow">资源发现</p><h1 id="title">浏览研究资源</h1><p id="summary">搜索公开的模型、数据集、算法、项目与论文。</p></div>
+      <label class="sort-label">排序方式<select id="sortSelect" aria-label="排序搜索结果"><option value="relevance">相关度</option><option value="newest">最新发布</option><option value="oldest">最早发布</option><option value="stars">最多收藏</option><option value="downloads">最多下载</option><option value="views">最多浏览</option><option value="trending">趋势热门</option></select></label>
+    </section>
+
+    <div class="layout">
+      <aside class="filters" aria-label="搜索筛选">
+        <div class="filter-head"><strong>筛选条件</strong><button id="clearFilters" type="button">清除全部</button></div>
+        <section class="filter-group"><h2>资源类型</h2><div id="typeFilters" class="checklist"></div></section>
+        <section class="filter-group"><h2>研究领域</h2><div id="fieldFilters" class="checklist scroll"></div></section>
+        <section class="filter-group"><h2>标签</h2><div id="tagFilters" class="checklist scroll"></div></section>
+        <section class="filter-group"><h2>框架</h2><div id="frameworkFilters" class="checklist"></div></section>
+        <section class="filter-group"><h2>许可证</h2><div id="licenseFilters" class="checklist"></div></section>
+        <section class="filter-group"><h2>年份</h2><div id="yearFilters" class="checklist"></div></section>
+      </aside>
+      <section class="results" aria-live="polite">
+        <div id="activeFilters" class="active-filters"></div>
+        <div id="status" class="status"></div>
+        <div id="resultsList" class="results-list"></div>
+        <nav id="pagination" class="pagination" aria-label="搜索结果分页"></nav>
+      </section>
+    </div>
+  </main>
+  <script src="/search.js"></script>
+</body>
+</html>

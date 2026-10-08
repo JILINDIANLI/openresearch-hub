@@ -1,0 +1,1 @@
+"""Gitea repository integration module."""
